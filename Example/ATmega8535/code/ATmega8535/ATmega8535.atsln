@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Atmel Studio Solution File, Format Version 11.00
+Project("{54F91283-7BC4-4236-8FF9-10F437C3AD48}") = "ATmega8535", "ATmega8535\ATmega8535.cproj", "{DABAAB03-BC9D-4568-AF56-4839A94F7C5B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AVR = Debug|AVR
+		Release|AVR = Release|AVR
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DABAAB03-BC9D-4568-AF56-4839A94F7C5B}.Debug|AVR.ActiveCfg = Debug|AVR
+		{DABAAB03-BC9D-4568-AF56-4839A94F7C5B}.Debug|AVR.Build.0 = Debug|AVR
+		{DABAAB03-BC9D-4568-AF56-4839A94F7C5B}.Release|AVR.ActiveCfg = Release|AVR
+		{DABAAB03-BC9D-4568-AF56-4839A94F7C5B}.Release|AVR.Build.0 = Release|AVR
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
