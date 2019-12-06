@@ -22,9 +22,12 @@
  *				    EIMSK= x---x---x---x---x---INT2---INT1---INT0   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[External Interrupt Mask Register]
  *
  *	  ATmega48,88,168,328 :
- *					EICRA= x---x---x---x---ISC11---ISC10---ISC01---ISC00 ~~~~~~~~~~~~~~~~~~[External Interrupt Control Register A]
- *				    EIMSK= x---x---x---x---x---x---INT1---INT0   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[External Interrupt Mask Register]
+ *					EICRA= x---x---x---x---ISC11---ISC10---ISC01---ISC00 ~~~~~~~~~~~~~~~~~~~~~~~~~~[External Interrupt Control Register A]
+ *				    EIMSK= x---x---x---x---x---x---INT1---INT0   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[External Interrupt Mask Register]
  *
+ *	  ATtiny25,45,85,24,44,84 :
+ * 					MCUCR= BODS---PUD---SE---SM1---SM0---BODSE---ISC01---ISC00  ~~~~~~~~~~~~~~~~~~[MCU Control Register]
+ *				    GIMSK= x---INT0---PCIE---x---x---x---x---x ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[General Interrupt Control Register]
  *
  *    ===================attachInterrupt()   step===================
  *    1) Global interrupt enable -------------------------------------sei();
@@ -47,6 +50,9 @@
  *    Atmega8,48,88,168,328 :
  *  				   INT0(LOW,CHANGE,RISING,FALLING)
  *				   	   INT1(LOW,CHANGE,RISING,FALLING)
+ *
+ *    Atmega25,45,85,24,44,84 :
+ *  				   INT0(LOW,CHANGE,RISING,FALLING)
  *		
  *
  */ 
@@ -78,6 +84,9 @@ void (*pointer_of_received_function_pointer)();//The purpose of this (void type 
 //     Atmega8,48,88,168,328 :
 //  					   INT0(LOW,CHANGE,RISING,FALLING)
 //  				   	   INT1(LOW,CHANGE,RISING,FALLING)
+//
+//     Atmega25,45,85,24,44,84 :
+//     		   		       INT0(LOW,CHANGE,RISING,FALLING)
 
 void attachInterrupt(uint8_t EXTERNAL_INTERRUPT_PIN, void (*received_function_pointer)(), uint8_t INTERRUPT_SENSE)
 {	
@@ -85,10 +94,9 @@ void attachInterrupt(uint8_t EXTERNAL_INTERRUPT_PIN, void (*received_function_po
 		|| defined(__AVR_ATmega16__) || defined(__AVR_ATmega16A__) || defined(__AVR_ATmega16P__) || defined(__AVR_ATmega16PA__)\
 		|| defined(__AVR_ATmega32__) || defined(__AVR_ATmega32A__)\
 		|| defined(__AVR_ATmega8535__)
-	
-		sei();// To enable Global interrupt bit I 
-		INTERRUPT_SENSE_CONTROL(digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN), INTERRUPT_SENSE);//this function set the interrupt sense mode(LOW,CHAGNE,RISING,FALLING)		GICR |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action. 
-		pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
+			sei();// To enable Global interrupt bit I 
+			INTERRUPT_SENSE_CONTROL(digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN), INTERRUPT_SENSE);//this function set the interrupt sense mode(LOW,CHAGNE,RISING,FALLING)			GICR |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action. 
+			pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
 	#endif
 	
 	#if defined(__AVR_ATmega164__) || defined(__AVR_ATmega164A__) || defined(__AVR_ATmega164P__) || defined(__AVR_ATmega164PA__)\
@@ -99,11 +107,24 @@ void attachInterrupt(uint8_t EXTERNAL_INTERRUPT_PIN, void (*received_function_po
 		|| defined(__AVR_ATmega88__) || defined(__AVR_ATmega88A__) || defined(__AVR_ATmega88P__) || defined(__AVR_ATmega88PA__) || defined(__AVR_ATmega88PB__)\
 		|| defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega168A__) || defined(__AVR_ATmega168PA__) || defined(__AVR_ATmega168PB__)\
 		|| defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
-		sei();// To enable Global interrupt bit I 
-		INTERRUPT_SENSE_CONTROL(digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN), INTERRUPT_SENSE);//this function set the interrupt sense mode(LOW,CHAGNE,RISING,FALLING)
-		EIMSK |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action. 
-		pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
+			sei();// To enable Global interrupt bit I 
+			INTERRUPT_SENSE_CONTROL(digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN), INTERRUPT_SENSE);//this function set the interrupt sense mode(LOW,CHAGNE,RISING,FALLING)
+			EIMSK |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action. 
+			pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
 	#endif
+	
+	#if defined(__AVR_ATtiny25__ )\
+		|| defined(__AVR_ATtiny45__ )\
+	    || defined(__AVR_ATtiny85__ )\
+		|| defined(__AVR_ATtiny24__ ) || defined(__AVR_ATtiny24A__ )\
+		|| defined(__AVR_ATtiny44__ ) || defined(__AVR_ATtiny44A__ )\
+		|| defined(__AVR_ATtiny84__ ) || defined(__AVR_ATtiny84A__ )
+			sei();// To enable Global interrupt bit I
+			INTERRUPT_SENSE_CONTROL(digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN), INTERRUPT_SENSE);//this function set the interrupt sense mode(LOW,CHAGNE,RISING,FALLING)
+			GIMSK |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action.
+			pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
+			
+    #endif
 	
 }
 //################################################################################################################################################################################
@@ -151,6 +172,21 @@ uint8_t digitalPinToInterrupt(uint8_t pin)// This function for to check the righ
 				default: printf("Error: please choose the right sense mode");
 			}
 	#endif
+	
+	
+	#if defined(__AVR_ATtiny25__ )\
+		|| defined(__AVR_ATtiny45__ )\
+		|| defined(__AVR_ATtiny85__ )\
+		|| defined(__AVR_ATtiny24__ ) || defined(__AVR_ATtiny24A__ )\
+		|| defined(__AVR_ATtiny44__ ) || defined(__AVR_ATtiny44A__ )\
+		|| defined(__AVR_ATtiny84__ ) || defined(__AVR_ATtiny84A__ )
+	switch(pin)
+	{
+		case INT0: return INT0;  //by default for ATtiny25,45,85=INT0=6
+		break;
+		default: printf("Error: please choose the right sense mode");
+	}
+	#endif
 }
 //################################################################################################################################################################################
 //==============================================================| digitalPinToInterrupt() End	|=================================================================================
@@ -182,6 +218,9 @@ uint8_t digitalPinToInterrupt(uint8_t pin)// This function for to check the righ
 //     Atmega8,48,88,168,328 :
 //  					   INT0(LOW,CHANGE,RISING,FALLING)
 //  				   	   INT1(LOW,CHANGE,RISING,FALLING)
+//
+//     Atmega25,45,85,24,44,84 :
+//     		   		       INT0(LOW,CHANGE,RISING,FALLING)
 
 void INTERRUPT_SENSE_CONTROL(uint8_t pin, uint8_t DETECT_SENSE)
 {
@@ -484,6 +523,44 @@ void INTERRUPT_SENSE_CONTROL(uint8_t pin, uint8_t DETECT_SENSE)
 		}
 	#endif
 	
+	
+	#if defined(__AVR_ATtiny25__ )\
+		|| defined(__AVR_ATtiny45__ )\
+		|| defined(__AVR_ATtiny85__ )\
+		|| defined(__AVR_ATtiny24__ ) || defined(__AVR_ATtiny24A__ )\
+		|| defined(__AVR_ATtiny44__ ) || defined(__AVR_ATtiny44A__ )\
+		|| defined(__AVR_ATtiny84__ ) || defined(__AVR_ATtiny84A__ )
+			if(pin==INT0)
+			{
+				if(DETECT_SENSE==LOW)
+				{
+					MCUCR &= ~(1<<ISC01);					MCUCR &= ~(1<<ISC00);
+				}
+				else if(DETECT_SENSE==CHANGE)
+				{
+					MCUCR &= ~(1<<ISC01);					MCUCR |= (1<<ISC00);
+				}
+				else if(DETECT_SENSE==FALLING)
+				{
+					MCUCR |= (1<<ISC01);
+					MCUCR &= ~(1<<ISC00);
+				}
+				else if(DETECT_SENSE==RISING)
+				{
+					MCUCR |= (1<<ISC01);
+					MCUCR |= (1<<ISC00);
+				}
+				else
+				{
+					//static_assert(0, "please choose the right sense mod");
+				}
+			}
+			else
+			{
+				//static_assert(0, "write something");
+			}
+	#endif
+	
 }
 //################################################################################################################################################################################
 //==============================================================| INTERRUPT_SENSE_CONTROL() End	|=================================================================================
@@ -535,6 +612,19 @@ void INTERRUPT_SENSE_CONTROL(uint8_t pin, uint8_t DETECT_SENSE)
 		pointer_of_received_function_pointer();
 	}
 #endif
+
+#if defined(__AVR_ATtiny25__ )\
+	|| defined(__AVR_ATtiny45__ )\
+	|| defined(__AVR_ATtiny85__ )\
+	|| defined(__AVR_ATtiny24__ ) || defined(__AVR_ATtiny24A__ )\
+	|| defined(__AVR_ATtiny44__ ) || defined(__AVR_ATtiny44A__ )\
+	|| defined(__AVR_ATtiny84__ ) || defined(__AVR_ATtiny84A__ )
+		ISR(INT0_vect)
+		{
+			pointer_of_received_function_pointer();
+		}
+#endif
+	
 //################################################################################################################################################################################
 //==============================================================| ISR() End |=================================================================================
 //################################################################################################################################################################################

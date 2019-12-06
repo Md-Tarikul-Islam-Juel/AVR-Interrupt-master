@@ -23,6 +23,12 @@
 #elif defined(__AVR_ATmega88__) || defined(__AVR_ATmega88A__) || defined(__AVR_ATmega88P__) || defined(__AVR_ATmega88PA__) || defined(__AVR_ATmega88PB__)
 #elif defined(__AVR_ATmega168__) || defined(__AVR_ATmega168P__) || defined(__AVR_ATmega168A__) || defined(__AVR_ATmega168PA__) || defined(__AVR_ATmega168PB__)
 #elif defined(__AVR_ATmega328__) || defined(__AVR_ATmega328P__)
+#elif defined(__AVR_ATtiny25__ )
+#elif defined(__AVR_ATtiny45__ )
+#elif defined(__AVR_ATtiny85__ )
+#elif defined(__AVR_ATtiny24__ ) || defined(__AVR_ATtiny24A__ )
+#elif defined(__AVR_ATtiny44__ ) || defined(__AVR_ATtiny44A__ )
+#elif defined(__AVR_ATtiny84__ ) || defined(__AVR_ATtiny84A__ )
 #else
 	#error "no definitions available for this AVR"
 #endif

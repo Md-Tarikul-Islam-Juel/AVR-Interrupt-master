@@ -162,10 +162,10 @@ int main(void)
   ce:	9f 93       	push	r25
   d0:	8f 93       	push	r24
   d2:	0e 94 6a 01 	call	0x2d4	; 0x2d4 <printf>
-				case INT1: return INT1;  //by default for atmega8=INT1=7
-						   break;
-				default: printf("Error: please choose the right sense mode");
-			}
+		case INT0: return INT0;  //by default for ATtiny25,45,85=INT0=6
+		break;
+		default: printf("Error: please choose the right sense mode");
+	}
 	#endif
 }
   d6:	0f 90       	pop	r0
@@ -182,10 +182,10 @@ int main(void)
 								break;
 				case INT1: return INT1;  //by default for atmega16,32=INT1=7-----atmega164=INT1=1
   e0:	87 e0       	ldi	r24, 0x07	; 7
-				case INT1: return INT1;  //by default for atmega8=INT1=7
-						   break;
-				default: printf("Error: please choose the right sense mode");
-			}
+		case INT0: return INT0;  //by default for ATtiny25,45,85=INT0=6
+		break;
+		default: printf("Error: please choose the right sense mode");
+	}
 	#endif
 }
   e2:	08 95       	ret
@@ -361,9 +361,9 @@ int main(void)
  19e:	08 95       	ret
 
 000001a0 <attachInterrupt>:
-//     Atmega8,48,88,168 :
-//  					   INT0(LOW,CHANGE,RISING,FALLING)
-//  				   	   INT1(LOW,CHANGE,RISING,FALLING)
+//
+//     Atmega25,45,85,24,44,84 :
+//     		   		       INT0(LOW,CHANGE,RISING,FALLING)
 
 void attachInterrupt(uint8_t EXTERNAL_INTERRUPT_PIN, void (*received_function_pointer)(), uint8_t INTERRUPT_SENSE)
 {	
@@ -378,14 +378,13 @@ void attachInterrupt(uint8_t EXTERNAL_INTERRUPT_PIN, void (*received_function_po
 		|| defined(__AVR_ATmega16__) || defined(__AVR_ATmega16A__) || defined(__AVR_ATmega16P__) || defined(__AVR_ATmega16PA__)\
 		|| defined(__AVR_ATmega32__) || defined(__AVR_ATmega32A__)\
 		|| defined(__AVR_ATmega8535__)
-	
-		sei();// To enable Global interrupt bit I 
+			sei();// To enable Global interrupt bit I 
  1ae:	78 94       	sei
-		INTERRUPT_SENSE_CONTROL(digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN), INTERRUPT_SENSE);//this function set the interrupt sense mode(LOW,CHAGNE,RISING,FALLING)
+			INTERRUPT_SENSE_CONTROL(digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN), INTERRUPT_SENSE);//this function set the interrupt sense mode(LOW,CHAGNE,RISING,FALLING)
  1b0:	0e 94 5f 00 	call	0xbe	; 0xbe <digitalPinToInterrupt>
  1b4:	60 2f       	mov	r22, r16
  1b6:	0e 94 72 00 	call	0xe4	; 0xe4 <INTERRUPT_SENSE_CONTROL>
-		GICR |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action. 
+			GICR |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action. 
  1ba:	0b b7       	in	r16, 0x3b	; 59
  1bc:	81 2f       	mov	r24, r17
  1be:	0e 94 5f 00 	call	0xbe	; 0xbe <digitalPinToInterrupt>
@@ -400,13 +399,13 @@ void attachInterrupt(uint8_t EXTERNAL_INTERRUPT_PIN, void (*received_function_po
  1d2:	ca 01       	movw	r24, r20
  1d4:	80 2b       	or	r24, r16
  1d6:	8b bf       	out	0x3b, r24	; 59
-		pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
+			pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
  1d8:	d0 93 8c 00 	sts	0x008C, r29
  1dc:	c0 93 8b 00 	sts	0x008B, r28
-		INTERRUPT_SENSE_CONTROL(digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN), INTERRUPT_SENSE);//this function set the interrupt sense mode(LOW,CHAGNE,RISING,FALLING)
-		EIMSK |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action. 
-		pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
-	#endif
+			GIMSK |= (1<<digitalPinToInterrupt(EXTERNAL_INTERRUPT_PIN));// External interrupt pin select (INT0,INT1,INT2)//NB: dont take it before INTERRUPT_SENSE_CONTROL() function because when you will use pull down network initally it call ISR() to take main action.
+			pointer_of_received_function_pointer=received_function_pointer;//here we send the address of (received_function_pointer) from main file to (address_of_receive_function) which is a void type function pointer [NB: the purpose is to run the received function inside the ISR() ]
+			
+    #endif
 	
 }
  1e0:	df 91       	pop	r29
