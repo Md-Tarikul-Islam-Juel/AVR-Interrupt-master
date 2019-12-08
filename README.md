@@ -15,7 +15,7 @@ This library is designed for the Atmel AVR microcontroller. The most interesting
   * [Example:](#example)
     + [CODE:](#code)
     + [SIMULATION:](#simulation)
-  * [Interrupt Pin  Sense Map:](#Interrupt-Pin-amp-Sense-Map)
+  * [Interrupt Pin  Sense Map:](#Interrupt-Pin--Sense-Map)
     + [ATmega16,32,8535 :](#atmega16328535-)
     + [ATmega164,324,644,1284 :](#atmega1643246441284-)
     + [ATmega8,48,88,168,328 :](#atmega84888168328-)
