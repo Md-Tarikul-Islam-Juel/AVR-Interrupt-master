@@ -71,7 +71,7 @@ This library is designed for the Atmel AVR microcontroller. The most interesting
     RISING: When external interrupt pin(INT0, INT1, INT2) will get a falling edge signal 
             then ISR() will be called.
                  
-    RFALLING:When external interrupt pin(INT0, INT1, INT2) will get a rising edge signal
+    FALLING:When external interrupt pin(INT0, INT1, INT2) will get a rising edge signal
              then ISR() will be called.
     ==================================================================================
       
